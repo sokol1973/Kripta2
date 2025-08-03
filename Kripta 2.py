@@ -5,6 +5,23 @@ from tkinter import *
 from tkinter import messagebox as mb
 
 
+def exchange():
+    code = entry.get()
+
+    if code:
+        try:
+            response = requests.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd")
+            response.raise_for_status()
+            data = response.json()
+            if code in data["rates"]:
+                exchange_rate = data["rates"][code]
+                mb.showinfo("Курс обмена криптовалюты", f"Курс:{exchange_rate} {code} за 1 доллар")
+            else:
+                mb.showerror("Ошибка!", f"Криптовалюта {code} не найдена!")
+        except Exception as e:
+            mb.showerror("Ошибка", f"Произошла ошибка: {e}.")
+    else:
+        mb.showwarning("Внимание!", "Введите название криптовалюты")
 
 
 window = Tk()
@@ -20,8 +37,5 @@ Button(text="Получить курс обмена криптовалюты к 
 
 window.mainloop()
 
-result = requests.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd") # выводим данные из сайта
-data = json.loads(result.text)
-p = pprint.PrettyPrinter(indent=4)
 
-p.pprint(data)
+
